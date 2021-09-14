@@ -3,6 +3,7 @@
 # import Modules
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 import datetime
 import os
 # Personal information
@@ -80,37 +81,44 @@ def creat_note():
 
 
 # SHOW Function
+
 def show_edit():
+
     # list notes
     nots_arr = os.listdir("c:/Users/MyHP/Notes")
     j = "Notes List"
+# window to see and edit Notes
     win = Toplevel(root)
-    win.geometry("400x100")
-    win.title('Notes Lsit')
+    win.title("PythonGuides")
+    win.geometry("400x450")
+    win['bg'] = '#fb0'
+# Note Text
+    txtarea = Text(win, width=40, height=20)
+    txtarea.pack(pady=20)
+# pathh to insert note direction
+    pathh = Entry(win)
+    pathh.pack(side=LEFT, expand=True, fill=X, padx=20)
+# Function to open old note
 
-    # Creat A Main Frame
-    main_frame = Frame(win)
-    main_frame.pack(fill=BOTH, expand=1)
-    # Create A Canvas
-    my_canvas = Canvas(main_frame)
-    my_canvas.pack(side=LEFT, fill=BOTH, expand=1)
-    # Add A Scrollbar To the Canvas
-    my_scrollbar = ttk.Scrollbar(
-        main_frame, orient=VERTICAL, command=my_canvas.yview)
-    my_scrollbar.pack(side=RIGHT, fill=Y)
-    # Configure Thes Canvas
-    my_canvas.configure(yscrollcommand=my_scrollbar.set)
-    my_canvas.bind('<Configure>', lambda e: my_canvas.configure(
-        scrollregion=my_canvas.bbox("all")))
-    # Create ANOTER Frame INSIDE the canvas
-    second_frame = Frame(my_canvas)
-    # Add tha new frame to a window in the canvas
-    my_canvas.create_window((0, 0), window=second_frame, anchor="nw")
-    x = 0
-    for i in nots_arr:
-        Button(second_frame, text=i, font="arial 10 bold").grid(
-            row=x, column=0, pady=2, padx=2)
-        x += 1
+    def openNote():
+        global adrs
+        tf = filedialog.askopenfilename(
+            initialdir="C:/Users/MainFrame/Desktop/", title="Open Text file", filetypes=(("Text Files", "*.txt"),))
+        adrs = tf
+        pathh.insert(END, tf)
+        tf = open(tf, "r")
+        data = tf.read()
+        txtarea.insert(END, data)
+
+        tf.close()
+# Function To save any changing in any note
+
+    def savechanging():
+        fil = open(adrs, "w")
+        fil.write(txtarea.get("1.0", "end"))
+    Button(win, text="Open File", command=openNote).pack(
+        side=RIGHT, expand=True, fill=X, padx=20)
+    Button(win, text="save changing", command=savechanging).place(x=300, y=350)
 
 
 # Window
